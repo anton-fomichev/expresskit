@@ -9,6 +9,7 @@ import type {
     Router,
 } from 'express';
 
+import {HTTP_METHODS} from './constants';
 import type {CSPPreset} from './csp';
 import type {getDefaultPresets} from './csp/default-presets';
 import type {CSPMiddlewareParams} from './csp/middleware';
@@ -96,7 +97,6 @@ export interface AppRouteDescription extends AppRouteParams {
           }) => CSPPreset);
 }
 
-export const HTTP_METHODS = ['get', 'head', 'options', 'post', 'put', 'patch', 'delete'] as const;
 export type HttpMethod = (typeof HTTP_METHODS)[number];
 
 export interface AppMountHandler {

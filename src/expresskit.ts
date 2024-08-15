@@ -7,11 +7,10 @@ import type {AppConfig, NodeKit} from '@gravity-ui/nodekit';
 import express, {Express} from 'express';
 
 import {setupBaseMiddleware} from './base-middleware';
+import {APP_DEFAULT_PORT} from './constants';
 import {setupParsers} from './parsers';
 import {setupRoutes} from './router';
 import type {AppRoutes} from './types';
-
-const DEFAULT_PORT = 3030;
 
 export class ExpressKit {
     nodekit: NodeKit;
@@ -19,7 +18,15 @@ export class ExpressKit {
     express: Express;
     httpServer?: Server;
 
-    constructor(nodekit: NodeKit, routes: AppRoutes) {
+    constructor({
+        nodekit,
+        openAPIPath,
+        routes,
+    }: {
+        nodekit: NodeKit;
+        openAPIPath?: string;
+        routes?: AppRoutes;
+    }) {
         this.nodekit = nodekit;
         this.config = nodekit.config;
 
@@ -35,7 +42,12 @@ export class ExpressKit {
 
         setupBaseMiddleware(this.nodekit.ctx, this.express);
         setupParsers(this.nodekit.ctx, this.express);
-        setupRoutes(this.nodekit.ctx, this.express, routes);
+        setupRoutes({
+            ctx: this.nodekit.ctx,
+            expressApp: this.express,
+            openAPIPath,
+            routes,
+        });
 
         const appSocket = this.getAppSocket();
         const listenTarget = this.getListenTarget(appSocket);
@@ -77,6 +89,7 @@ export class ExpressKit {
     }
 
     private getAppSocket = () => process.env.APP_SOCKET || this.config.appSocket;
+
     private getListenTarget = (appSocket?: string) =>
-        process.env.APP_PORT || this.config.appPort || appSocket || DEFAULT_PORT;
+        process.env.APP_PORT || this.config.appPort || appSocket || APP_DEFAULT_PORT;
 }

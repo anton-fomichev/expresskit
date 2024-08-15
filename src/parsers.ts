@@ -3,16 +3,8 @@ import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import type {Express} from 'express';
 
+import {DEFAULT_JSON_PARSER_CONFIG, DEFAULT_URLENCODED_PARSER_CONFIG} from './constants';
 import type {AppErrorHandler} from './types';
-
-const DEFAULT_JSON_PARSER_CONFIG = {
-    limit: '10mb',
-};
-
-const DEFAULT_URLENCODED_PARSER_CONFIG = {
-    limit: '10mb',
-    extended: false,
-};
 
 interface BodyLimitError extends Error {
     statusCode: number;
